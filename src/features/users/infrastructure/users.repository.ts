@@ -35,11 +35,11 @@ export class UsersRepository {
   }
 
   async findUserById(id: string) {
-    // const findedUser = await this.uRepository.findOneBy({ id });
-    // if (!findedUser) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // return findedUser;
+    const findedUser = await this.dataSource.query('SELECT * FROM users WHERE id = $1', [id]);
+    if (!findedUser.length) {
+      throw new NotFoundException('User not found');
+    }
+    return findedUser;
   }
 
   async findUserByLogin(login: string) {
@@ -71,7 +71,7 @@ export class UsersRepository {
   }
 
   async deleteUserById(id: string) {
-    // const findedUser = await this.findUserById(id);
+    const findedUser = await this.findUserById(id);
     return await this.dataSource.query('DELETE FROM users WHERE id = $1', [id]);
   }
 
