@@ -35,16 +35,11 @@ export class UsersController {
   @Get('users')
   @UseGuards(BasicAuthGuard)
   async findAll(@Query() query: any) {
-    // const users = await this.usersService.findAll();
-    const users = await this.usersQueryRepository.getAllUsersWithQuery(query)
-    // return users.items.map(user => this.usersQueryRepository.userMap(user))
+    // const users = await this.usersQueryRepository.getAllUsersWithQuery(query)
+    const users = await this.usersQueryRepository.findAll()
     return users
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.usersService.(+id);
-  // }
 
 
   @Delete('users/:id')

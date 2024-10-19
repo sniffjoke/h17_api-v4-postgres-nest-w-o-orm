@@ -39,24 +39,24 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
     @UserAgent() userAgent: string,
-  ): Promise<AuthOutputModel> {
-    const { accessToken, refreshToken } = await this.authService.login(loginDto, ip.address() as string, userAgent);
-    response.cookie('refreshToken', refreshToken, {
-      secure: true,
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-    return {
-      accessToken,
-    };
+  ) {
+    // const { accessToken, refreshToken } = await this.authService.login(loginDto, ip.address() as string, userAgent);
+    // response.cookie('refreshToken', refreshToken, {
+    //   secure: true,
+    //   httpOnly: true,
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    // });
+    // return {
+    //   accessToken,
+    // };
   }
 
   // @UsePipes(ValidationPipe)
   @Post('registration')
   @HttpCode(204)
   // @UseGuards(ThrottlerGuard)
-  async register(@Body() dto: CreateUserDto) {
-    const userId = await this.usersService.createUser(dto, false);
+  async register(@Body() createUserDto: CreateUserDto) {
+    const userId = await this.usersService.createUser(createUserDto, false);
     const newUser = await this.usersQueryRepository.userOutput(userId);
     return newUser;
   }
@@ -88,14 +88,14 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   // @UseFilters(NotFoundExceptionFilter)
   async activateEmail(@Body() dto: ActivateAccountDto) {
-    return await this.usersService.activateEmail(dto.code);
+    // return await this.usersService.activateEmail(dto.code);
   }
 
   @Post('registration-email-resending')
   @HttpCode(204)
   @UseGuards(ThrottlerGuard)
   async resendEmail(@Body() dto: ResendActivateCodeDto) {
-    return await this.usersService.resendEmail(dto.email);
+    // return await this.usersService.resendEmail(dto.email);
   }
 
   // @Post('password-recovery')
