@@ -36,7 +36,7 @@ export class UsersQueryRepository {
       `
                 SELECT * FROM users
                 WHERE "email" ILIKE $1 OR "login" ILIKE $2
-                ORDER BY $3 ASC
+                ORDER BY $3 DESC
                 OFFSET $4
                 LIMIT $5
             `,
