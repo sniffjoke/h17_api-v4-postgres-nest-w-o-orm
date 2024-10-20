@@ -11,15 +11,17 @@ export class UsersRepository {
   }
 
   async createUser(userData: any) {
-    const result = await this.dataSource.query('INSERT INTO users ("login", "email", "password", "emailConfirmationIsConfirm", "emailConfirmationConfirmationCode", "emailConfirmationExpirationDate") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, login, email', [
-      userData.login,
-      userData.email,
-      userData.password,
-      userData.emailConfirmationIsConfirmed,
-      userData.emailConfirmationConfirmationCode,
-      userData.emailConfirmationExpirationDate
-    ]);
-    return result
+    const result = await this.dataSource.query(
+      'INSERT INTO users ("login", "email", "password", "emailConfirmationIsConfirm", "emailConfirmationConfirmationCode", "emailConfirmationExpirationDate") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id", "login", "email", "createdAt"', [
+        userData.login,
+        userData.email,
+        userData.password,
+        userData.emailConfirmationIsConfirmed,
+        userData.emailConfirmationConfirmationCode,
+        userData.emailConfirmationExpirationDate,
+      ],
+    );
+    return result[0];
   }
 
 
