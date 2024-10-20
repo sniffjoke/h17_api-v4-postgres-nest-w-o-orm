@@ -40,15 +40,16 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @UserAgent() userAgent: string,
   ) {
-    // const { accessToken, refreshToken } = await this.authService.login(loginDto, ip.address() as string, userAgent);
-    // response.cookie('refreshToken', refreshToken, {
-    //   secure: true,
-    //   httpOnly: true,
-    //   maxAge: 30 * 24 * 60 * 60 * 1000,
-    // });
-    // return {
-    //   accessToken,
-    // };
+    const { accessToken, refreshToken } = await this.authService.login(loginDto, ip.address() as string, userAgent);
+    // const userLogin = await this.authService.login(loginDto, ip.address() as string, userAgent);
+    response.cookie('refreshToken', refreshToken, {
+      secure: true,
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    return {
+      accessToken,
+    };
   }
 
   // @UsePipes(ValidationPipe)

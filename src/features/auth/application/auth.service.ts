@@ -22,50 +22,46 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto, myIp: string, userAgent: string) {
-    // const findedUser = await this.usersRepository.findUserByLogin(loginDto.loginOrEmail);
-    // const comparePass = await this.cryptoService.comparePassword(loginDto.password, findedUser.password);
-    // if (!comparePass) {
-    //   throw new UnauthorizedException('Password not match');
-    // }
-    // const findSession = await this.devicesRepository.findManyDevices({ userId: findedUser.id, ip: myIp, title: userAgent });
-    // const deviceData: any = {
-    //   userId: findedUser.id,
-    //   deviceId: findSession ? findSession.deviceId : this.uuidService.generate(),
-    //   ip: myIp,
-    //   title: userAgent,
-    //   lastActiveDate: new Date(Date.now()).toISOString(),
-    // };
-    // const {
-    //   accessToken,
-    //   refreshToken,
-    // } = this.tokensService.createTokens(findedUser.id, deviceData.deviceId);
-    // if (findSession) {
-    //   await this.devicesRepository.updateDeviceById(findSession.id, {
-    //     $set: {
-    //       lastActiveDate: new Date(Date.now()).toISOString(),
-    //     },
-    //   });
-    //   const tokenData = {
-    //     userId: findedUser.id,
-    //     refreshToken,
-    //     blackList: false,
-    //     deviceId: findSession.deviceId,
-    //   };
-    //   await this.tokensRepository.createToken(tokenData);
-    // } else {
-    //   const newDevice = await this.devicesService.createSession(deviceData);
-    //   const tokenData = {
-    //     userId: findedUser.id,
-    //     refreshToken,
-    //     blackList: false,
-    //     deviceId: deviceData.deviceId,
-    //   };
-    //   await this.tokensRepository.createToken(tokenData);
-    // }
-    // return {
-    //   accessToken,
-    //   refreshToken,
-    // };
+    const findedUser = await this.usersRepository.findUserByLogin(loginDto.loginOrEmail);
+    const comparePass = await this.cryptoService.comparePassword(loginDto.password, findedUser.password);
+    if (!comparePass) {
+      throw new UnauthorizedException('Password not match');
+    }
+    const findSession = await this.devicesRepository.findManyDevices({ userId: findedUser.id, ip: myIp, title: userAgent });
+    const deviceData: any = {
+      userId: findedUser.id,
+      deviceId: findSession ? findSession.deviceId : this.uuidService.generate(),
+      ip: myIp,
+      title: userAgent,
+      lastActiveDate: new Date(Date.now()).toISOString(),
+    };
+    const {
+      accessToken,
+      refreshToken,
+    } = this.tokensService.createTokens(findedUser.id, deviceData.deviceId);
+    if (findSession) {
+      await this.devicesRepository.updateDeviceById(findSession.id, new Date(Date.now()).toISOString());
+      const tokenData = {
+        userId: findedUser.id,
+        refreshToken,
+        blackList: false,
+        deviceId: findSession.deviceId,
+      };
+      await this.tokensRepository.createToken(tokenData);
+    } else {
+      const newDevice = await this.devicesService.createSession(deviceData);
+      const tokenData = {
+        userId: findedUser.id,
+        refreshToken,
+        blackList: false,
+        deviceId: deviceData.deviceId,
+      };
+      await this.tokensRepository.createToken(tokenData);
+    }
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   // async getMe(bearerHeader: string) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, Req } from '@nestjs/common';
 import { DevicesService } from '../application/devices.service';
 import { Request } from 'express';
 
@@ -17,12 +17,12 @@ export class DevicesController {
     return devices
   }
 
-  // @Delete('devices/:id')
-  // @HttpCode(204)
-  // async deleteSessionById(@Req() req: Request, @Param('id') id: string) {
-  //   const deleteDevice = await this.devicesService.deleteDeviceByDeviceIdField(req.cookies, id)
-  //   return deleteDevice
-  // }
+  @Delete('devices/:id')
+  @HttpCode(204)
+  async deleteSessionById(@Req() req: Request, @Param('id') id: string) {
+    const deleteDevice = await this.devicesService.deleteDeviceByDeviceIdField(req.cookies, id)
+    return deleteDevice
+  }
   //
   // @Delete('devices')
   // @HttpCode(204)

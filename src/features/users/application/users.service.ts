@@ -26,7 +26,6 @@ export class UsersService {
     }
     const hashPassword = await this.cryptoService.hashPassword(createUserDto.password);
     const newUserData = { ...createUserDto, ...emailConfirmation, password: hashPassword };
-    console.log(newUserData);
     const saveData = await this.usersRepository.createUser(newUserData);
     // console.log(saveData);
     // const saveData = await this.usersRepository.createUser();
@@ -41,7 +40,7 @@ export class UsersService {
           hours: 1,
           minutes: 30,
         },
-      ),
+      ).toISOString(),
     };
     const emailConfirmationIsConfirm: EmailConfirmationModel = {
       emailConfirmationIsConfirmed: true,

@@ -11,7 +11,7 @@ export class UsersRepository {
   }
 
   async createUser(userData: any) {
-    const result = await this.dataSource.query('INSERT INTO users (login, email, password, emailConfirmationIsConfirm, emailConfirmationConfirmationCode, emailConfirmationExpirationDate) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, login, email', [
+    const result = await this.dataSource.query('INSERT INTO users ("login", "email", "password", "emailConfirmationIsConfirm", "emailConfirmationConfirmationCode", "emailConfirmationExpirationDate") VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, login, email', [
       userData.login,
       userData.email,
       userData.password,
@@ -39,15 +39,15 @@ export class UsersRepository {
     if (!findedUser.length) {
       throw new NotFoundException('User not found');
     }
-    return findedUser;
+    return findedUser[0];
   }
 
   async findUserByLogin(login: string) {
-    // const findedUser = await this.uRepository.findOneBy({ login });
-    // if (!findedUser) {
-    //   throw new UnauthorizedException('User not found');
-    // }
-    // return findedUser;
+    const findedUser = await this.dataSource.query('SELECT * FROM users WHERE login = $1', [login]);
+    if (!findedUser.length) {
+      throw new UnauthorizedException('User not found');
+    }
+    return findedUser[0];
   }
 
   async findUserByEmail(email: string) {
