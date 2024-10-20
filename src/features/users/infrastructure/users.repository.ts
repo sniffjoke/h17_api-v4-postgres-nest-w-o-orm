@@ -72,7 +72,7 @@ export class UsersRepository {
 
   async deleteUserById(id: string) {
     const findedUser = await this.findUserById(id);
-    return await this.dataSource.query('DELETE FROM users WHERE id = $1', [id]);
+    return await this.dataSource.query('DELETE FROM users WHERE "id" = $1', [id]);
   }
 
   async checkUserExistsByLogin(login: string, email: string) {

@@ -43,12 +43,33 @@ export class DevicesRepository {
     return findedDevice;
   }
 
+  async findDeviceByDeviceId(filter: any) {
+    const findedDevice = await this.dataSource.query(
+      'SELECT * FROM devices WHERE "deviceId" = $1',
+      [filter.deviceId]
+    );
+    if (!findedDevice) {
+      throw new NotFoundException('Device not found');
+    }
+    return findedDevice;
+  }
+
   async updateDeviceById(id: string, deviceData: any) {
     // return this.dRepository.save({
     //   id,
     //   ...deviceData
     // });
     return await this.dataSource.query('UPDATE devices SET "lastActiveDate" = $1 WHERE id = $2', [deviceData, id])
+  }
+
+  async deleteDeviceByDeviceId(filter: any) {
+    const finderDevice = this.findDeviceByDeviceId(filter.deviceId)
+    return await this.dataSource.query('DELETE FROM devices WHERE "deviceId" = $1', [filter.deviceId]);
+  }
+
+  async deleteAllDevicesExceptCurrent(filter: any) {
+    const deleteDevices = await this.dataSource.query('DELETE FROM devices WHERE "deviceId" = $1 AND "userId" <> $2', [filter.deviceId, filter.userId]);
+    return deleteDevices
   }
 
 }

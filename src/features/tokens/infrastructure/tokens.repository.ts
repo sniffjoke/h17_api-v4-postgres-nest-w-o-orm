@@ -14,8 +14,8 @@ export class TokensRepository {
     // const findedToken = await this.tRepository.findOneBy(filter)
     // return findedToken
     const findedToken = await this.dataSource.query(
-      'SELECT * FROM tokens WHERE "userId" = $1',
-      [filter.userId,]
+      'SELECT * FROM tokens WHERE "deviceId" = $1',
+      [filter.deviceId]
     );
     if (!findedToken.length) {
       throw new NotFoundException('Invalid deviceId');
@@ -23,9 +23,17 @@ export class TokensRepository {
     return findedToken[0];
   }
 
-  async updateManyTokensInDb(filter: any, payload: any) {
+  async updateStatusTokensInDb(filter: any) {
     // const updateTokens = await this.tRepository.update(filter, payload)
     // return updateTokens
+    console.log(typeof filter.deviceId);
+    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1', [filter.deviceId])
+  }
+
+  async updateStatusTokensAfterDeleteAllInDb(filter: any) {
+    // const updateTokens = await this.tRepository.update(filter, payload)
+    // return updateTokens
+    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1 AND "userId" <> $2', [filter.deviceId, filter.userId])
   }
 
   async updateOneTokenInDb(filter: any, payload: any) {

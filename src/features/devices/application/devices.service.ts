@@ -21,7 +21,7 @@ export class DevicesService {
 
   async createSession(deviceData: any) {
     const newDevice = await this.devicesRepository.createSession(deviceData);
-    return newDevice
+    return newDevice;
   }
 
   async getDevices(bearerHeaderR: string) {
@@ -54,42 +54,48 @@ export class DevicesService {
     // if (!findToken) {
     //     throw new NotFoundException('Invalid deviceId');
     // }
-    if (validateToken._id !== findToken?.userId.toString()) {
+    if (validateToken._id.toString() !== findToken?.userId) {
       throw new ForbiddenException('Not your device');
     }
-    // const findSession = await this.findDevice({deviceId})
+    const findSession = await this.devicesRepository.findDeviceByDeviceId({ deviceId });
     // if (!findSession) {
     //   throw new NotFoundException('Not found device');
     // }
-    // await this.deviceModel.deleteOne({ deviceId });
-    // const updateTokensInfo = await this.tokensService.updateManyTokensInDb({ deviceId }, { $set: { blackList: true } });
-    // if (!updateTokensInfo) {
-    //   throw new UnauthorizedException('Unknown Error');
-    // }
-    // return updateTokensInfo;
+    await this.devicesRepository.deleteDeviceByDeviceId({ deviceId });
+    // const updateTokensInfo = await this.tokensService.updateManyTokensInDb(
+    //   { deviceId },
+    //   { $set: { blackList: true } }
+    // );
+    const updateTokensInfo = await this.tokensRepository.updateStatusTokensInDb({ deviceId });
+    if (!updateTokensInfo) {
+      throw new UnauthorizedException('Unknown Error');
+    }
+    return updateTokensInfo;
   }
 
-  // async deleteAllDevicesExceptCurrent(bearerHeaderR: string) {
-  //   const token = this.tokensService.getTokenFromCookie(bearerHeaderR);
-  //   const validateToken: any = this.tokensService.validateRefreshToken(token);
-  //   if (!validateToken) {
-  //     throw new UnauthorizedException('Invalid refresh token');
-  //   }
-  //   const user = await this.usersRepository.findUserById(validateToken._id);
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-  //   await this.deviceModel.deleteMany({ userId: user._id, deviceId: { $ne: validateToken.deviceId } });
-  //   const updateTokensInfo = await this.tokensService.updateManyTokensInDb({
-  //     userId: validateToken._id,
-  //     deviceId: { $ne: validateToken.deviceId },
-  //   }, { $set: { blackList: true } });
-  //   if (!updateTokensInfo) {
-  //     throw new UnauthorizedException('Unknown Error');
-  //   }
-  //   return updateTokensInfo;
-  // }
-  //
+  async deleteAllDevicesExceptCurrent(bearerHeaderR: string) {
+    const token = this.tokensService.getTokenFromCookie(bearerHeaderR);
+    const validateToken: any = this.tokensService.validateRefreshToken(token);
+    if (!validateToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+    const user = await this.usersRepository.findUserById(validateToken._id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.devicesRepository.deleteAllDevicesExceptCurrent({
+      userId: user.id, deviceId: validateToken.deviceId,
+    });
+    const updateTokensInfo = await this.tokensRepository.updateStatusTokensAfterDeleteAllInDb({
+      userId: validateToken._id,
+      deviceId: validateToken.deviceId,
+    });
+    if (!updateTokensInfo) {
+      throw new UnauthorizedException('Unknown Error');
+    }
+    return updateTokensInfo;
+  }
+
   // async findDevice(filter: any) {
   //   const findedDevice = await this.deviceModel.findOne(filter)
   //   return findedDevice

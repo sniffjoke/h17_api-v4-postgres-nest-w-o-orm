@@ -23,13 +23,13 @@ export class DevicesController {
     const deleteDevice = await this.devicesService.deleteDeviceByDeviceIdField(req.cookies, id)
     return deleteDevice
   }
-  //
-  // @Delete('devices')
-  // @HttpCode(204)
-  // async deleteAllMyDevicesExceptCurrent(@Req() req: Request) {
-  //   const deleteDevices = await this.devicesService.deleteAllDevicesExceptCurrent(req.cookies)
-  //   return deleteDevices
-  // }
+
+  @Delete('devices')
+  @HttpCode(204)
+  async deleteAllMyDevicesExceptCurrent(@Req() req: Request) {
+    const deleteDevices = await this.devicesService.deleteAllDevicesExceptCurrent(req.cookies)
+    return deleteDevices
+  }
 
 
 
