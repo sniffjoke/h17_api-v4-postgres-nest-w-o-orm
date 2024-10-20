@@ -17,6 +17,7 @@ export class DevicesController {
     return devices
   }
 
+
   @Delete('devices/:id')
   @HttpCode(204)
   async deleteSessionById(@Req() req: Request, @Param('id') id: string) {
