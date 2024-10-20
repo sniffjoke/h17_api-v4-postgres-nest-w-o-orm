@@ -23,7 +23,7 @@ export class UsersQueryRepository {
   userMap(user: any) {
     const { email, login, createdAt, id } = user;
     return {
-      id,
+      id: id.toString(),
       login,
       email,
       createdAt,
@@ -48,15 +48,6 @@ export class UsersQueryRepository {
         (generateQuery.page - 1) * generateQuery.pageSize,
         generateQuery.pageSize,
       ])
-      // .find({
-      //   ...generateQuery.userParamsFilter,
-      //   order: {
-      //     [generateQuery.sortBy]: generateQuery.sortDirection,
-      //   },
-      //   take: generateQuery.pageSize,
-      //   skip: (generateQuery.page - 1) * generateQuery.pageSize,
-      // });
-
     const itemsOutput = items.map((item: any) => this.userMap(item));
     const resultPosts = new PaginationBaseModel(generateQuery, itemsOutput);
     return resultPosts;
@@ -81,7 +72,6 @@ export class UsersQueryRepository {
         '%' + searchLoginTerm + '%'
       ]
     );
-    console.log(totalCount[0].count);
     const pageSize = query.pageSize ? +query.pageSize : 10;
     const pagesCount = Math.ceil(Number(totalCount[0].count) / pageSize);
     return {
