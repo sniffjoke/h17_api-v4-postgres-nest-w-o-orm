@@ -81,21 +81,18 @@ export class UsersService {
   //   return updateUserInfo;
   // }
   //
-  // async activateEmail(code: string) {
-  //   const isUserExists = await this.usersRepository.findUserByCode(code);
-  //   if (isUserExists.emailConfirmation.isConfirmed) {
-  //     throw new BadRequestException('User already activate')
-  //   }
-  //   const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
-  //   const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
-  //     isUserExists,
-  //     {
-  //       emailConfirmation,
-  //     },
-  //   );
-  //   return updateUserInfo;
-  // }
-  //
+  async activateEmail(code: string) {
+    const isUserExists = await this.usersRepository.findUserByCode(code);
+    if (isUserExists.emailConfirmationIsConfirm) {
+      throw new BadRequestException('User already activate')
+    }
+    const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
+    const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
+      isUserExists.id
+    );
+    return updateUserInfo;
+  }
+
   async deleteUser(id: string) {
     const deleteUser = await this.usersRepository.deleteUserById(id);
     return deleteUser;

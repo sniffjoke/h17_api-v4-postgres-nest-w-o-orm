@@ -41,7 +41,6 @@ export class AuthController {
     @UserAgent() userAgent: string,
   ) {
     const { accessToken, refreshToken } = await this.authService.login(loginDto, ip.address() as string, userAgent);
-    // const userLogin = await this.authService.login(loginDto, ip.address() as string, userAgent);
     response.cookie('refreshToken', refreshToken, {
       secure: true,
       httpOnly: true,
@@ -89,7 +88,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   // @UseFilters(NotFoundExceptionFilter)
   async activateEmail(@Body() dto: ActivateAccountDto) {
-    // return await this.usersService.activateEmail(dto.code);
+    return await this.usersService.activateEmail(dto.code);
   }
 
   @Post('registration-email-resending')

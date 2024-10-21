@@ -29,11 +29,18 @@ export class UsersRepository {
     // return await this.uRepository.find();
   }
 
-  async updateUserByResendEmail(currentData: any, newData: any) {
+  async updateUserByResendEmail(userId: any) {
     // return await this.uRepository.save({
     //   ...currentData,
     //   ...newData,
     // });
+    const updateUserInfo = await this.dataSource.query(`
+    UPDATE users 
+    SET "emailConfirmationIsConfirm" = true
+    WHERE id = $1
+    `,
+      [userId]);
+    return updateUserInfo;
   }
 
   async findUserById(id: string) {
@@ -61,15 +68,11 @@ export class UsersRepository {
   }
 
   async findUserByCode(code: string) {
-    // const findedUser = await this.uRepository.findOne({
-    //   where: {
-    //     emailConfirmation: { confirmationCode: code },
-    //   },
-    // });
-    // if (!findedUser) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // return findedUser;
+    const findedUser = await this.dataSource.query('SELECT * FROM users WHERE "emailConfirmationConfirmationCode" = $1', [code]);
+    if (!findedUser.length) {
+      throw new NotFoundException('User not found');
+    }
+    return findedUser[0];
   }
 
   async deleteUserById(id: string) {
