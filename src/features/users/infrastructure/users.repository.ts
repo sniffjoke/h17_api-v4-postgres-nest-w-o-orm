@@ -70,7 +70,7 @@ export class UsersRepository {
   async findUserByCode(code: string) {
     const findedUser = await this.dataSource.query('SELECT * FROM users WHERE "emailConfirmationConfirmationCode" = $1', [code]);
     if (!findedUser.length) {
-      throw new NotFoundException('User not found');
+      throw new BadRequestException('User not found');
     }
     return findedUser[0];
   }
