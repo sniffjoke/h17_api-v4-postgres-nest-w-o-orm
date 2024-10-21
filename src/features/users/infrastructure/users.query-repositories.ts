@@ -12,7 +12,7 @@ export class UsersQueryRepository {
   }
 
   async userOutput(id: string) {
-    const findedUser = await this.dataSource.query('SELECT * FROM users WHERE id = $1', [id])
+    const findedUser = await this.dataSource.query('SELECT * FROM users WHERE id = $1', [id]);
     console.log(findedUser);
     if (!findedUser) {
       throw new NotFoundException('User not found');
@@ -36,18 +36,16 @@ export class UsersQueryRepository {
       `
                 SELECT * FROM users
                 WHERE "email" ILIKE $1 OR "login" ILIKE $2
-                ORDER BY $3 DESC
-                OFFSET $4
-                LIMIT $5
+                ORDER BY "${generateQuery.sortBy}" ${generateQuery.sortDirection}
+                OFFSET $3
+                LIMIT $4
             `,
       [
         generateQuery.searchEmailTerm,
         generateQuery.searchLoginTerm,
-        generateQuery.sortBy,
-        // generateQuery.sortDirection,
         (generateQuery.page - 1) * generateQuery.pageSize,
         generateQuery.pageSize,
-      ])
+      ]);
     const itemsOutput = items.map((item: any) => this.userMap(item));
     const resultPosts = new PaginationBaseModel(generateQuery, itemsOutput);
     return resultPosts;
@@ -69,8 +67,8 @@ export class UsersQueryRepository {
     `,
       [
         '%' + searchEmailTerm + '%',
-        '%' + searchLoginTerm + '%'
-      ]
+        '%' + searchLoginTerm + '%',
+      ],
     );
     const pageSize = query.pageSize ? +query.pageSize : 10;
     const pagesCount = Math.ceil(Number(totalCount[0].count) / pageSize);
@@ -90,7 +88,7 @@ export class UsersQueryRepository {
   async findAll() {
     const users = await this.dataSource.query('SELECT "id", "login", "email", "createdAt", "emailConfirmationIsConfirm" FROM users');
     // console.log(users);
-    return users
+    return users;
   }
 
 
