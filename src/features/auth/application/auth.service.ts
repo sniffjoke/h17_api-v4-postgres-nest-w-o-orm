@@ -81,7 +81,7 @@ export class AuthService {
     return {
       email: findedUser.email,
       login: findedUser.login,
-      userId: findedUser.id,
+      userId: `${findedUser.id}`,
     };
   }
 
