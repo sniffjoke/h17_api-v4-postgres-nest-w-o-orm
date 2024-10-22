@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectDataSource} from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 
@@ -11,11 +11,9 @@ export class TokensRepository {
   }
 
   async findToken(filter: any) {
-    // const findedToken = await this.tRepository.findOneBy(filter)
-    // return findedToken
     const findedToken = await this.dataSource.query(
       'SELECT * FROM tokens WHERE "deviceId" = $1',
-      [filter.deviceId]
+      [filter.deviceId],
     );
     if (!findedToken.length) {
       throw new NotFoundException('Invalid deviceId');
@@ -23,17 +21,42 @@ export class TokensRepository {
     return findedToken[0];
   }
 
+  async findTokenByRToken(filter: any) {
+    const findedToken = await this.dataSource.query(
+      'SELECT * FROM tokens WHERE "refreshToken" = $1',
+      [filter.refreshToken],
+    );
+    if (!findedToken.length) {
+      throw new NotFoundException('Invalid refreshToken');
+    }
+    return findedToken[0];
+  }
+
+  // Update status tokens for devices
+
   async updateStatusTokensInDb(filter: any) {
     // const updateTokens = await this.tRepository.update(filter, payload)
     // return updateTokens
-    console.log(typeof filter.deviceId);
-    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1', [filter.deviceId])
+    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1', [filter.deviceId]);
   }
 
   async updateStatusTokensAfterDeleteAllInDb(filter: any) {
     // const updateTokens = await this.tRepository.update(filter, payload)
     // return updateTokens
-    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1 AND "userId" <> $2', [filter.deviceId, filter.userId])
+    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1 AND "userId" <> $2', [filter.deviceId, filter.userId]);
+  }
+
+  // Update status tokens after refresh tokens
+
+  async updateStatusRTokensInDb(filter: any) {
+    // const updateTokens = await this.tRepository.update(filter, payload)
+    // return updateTokens
+    return await this.dataSource.query(
+      `
+                UPDATE tokens
+                SET "blackList" = true 
+                WHERE "refreshToken" = $1`,
+      [filter.refreshToken]);
   }
 
   async updateOneTokenInDb(filter: any, payload: any) {
@@ -46,9 +69,9 @@ export class TokensRepository {
       tokenData.userId,
       tokenData.deviceId,
       tokenData.refreshToken,
-      tokenData.blackList
+      tokenData.blackList,
     ]);
-    return result
+    return result;
     // const saveToken = await this.tRepository.save(tokenData)
     // return saveToken
   }
