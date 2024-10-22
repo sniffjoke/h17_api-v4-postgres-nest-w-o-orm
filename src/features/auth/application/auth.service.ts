@@ -135,7 +135,7 @@ export class AuthService {
     if (!isTokenExists || isTokenExists.blackList) {
       throw new UnauthorizedException('Refresh token not valid');
     }
-    const updateTokenInfo = await this.tokensRepository.updateStatusTokensAfterDeleteAllInDb({deviceId: tokenValidate.deviceId});
+    const updateTokenInfo = await this.tokensRepository.updateStatusTokensInDb({deviceId: tokenValidate.deviceId});
     if (!updateTokenInfo.length) {
       throw new UnauthorizedException('Something went wrong');
     }
