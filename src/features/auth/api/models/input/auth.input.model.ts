@@ -1,5 +1,6 @@
-import { IsEmail, IsString, Length } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 import { Trim } from '../../../../../core/decorators/transform/trim';
+import { UserExists } from '../../../../../core/decorators/async/user-is-exist.decorator';
 
 export class LoginDto {
   @Trim()
@@ -13,10 +14,12 @@ export class LoginDto {
   password: string;
 }
 
-export class ActivateAccountDto {
-  @Trim()
+export class EmailActivateDto {
+  // @IsNotEmpty({message: 'Не может быть пустым'})
   @IsString({message: 'Должно быть строковым значением'})
-  code: string
+  @Trim()
+  @Length(3, 100, {message: 'Количество знаков: 3-100'})
+  code: string;
 }
 
 export class ResendActivateCodeDto {

@@ -1,16 +1,15 @@
-import { Body, Controller, HttpCode, Post, Req, Res, UseGuards, UsePipes } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { Response } from 'express';
 import {
-  ActivateAccountDto,
-  LoginDto, ResendActivateCodeDto,
+  EmailActivateDto,
+  LoginDto,
+  ResendActivateCodeDto,
 } from './models/input/auth.input.model';
-import { AuthOutputModel } from './models/output/auth.output.model';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { UserAgent } from '../../../core/decorators/common/user-agent.decorator';
 import ip from 'ip'
 import { CreateUserDto } from '../../users/api/models/input/create-user.dto';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { UsersQueryRepository } from '../../users/infrastructure/users.query-repositories';
 import { UsersService } from '../../users/application/users.service';
 
@@ -31,10 +30,9 @@ export class AuthController {
   //   return userData;
   // }
 
-  // @UsePipes(ValidationPipe)
   @Post('login')
   @HttpCode(200)
-  @UseGuards(ThrottlerGuard)
+  // @UseGuards(ThrottlerGuard)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
@@ -85,10 +83,10 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(204)
-  @UseGuards(ThrottlerGuard)
-  // @UseFilters(NotFoundExceptionFilter)
-  async activateEmail(@Body() dto: ActivateAccountDto) {
-    return await this.usersService.activateEmail(dto.code);
+  // @UseGuards(ThrottlerGuard)
+  async activateEmail(@Body() dto: EmailActivateDto) {
+    const activateEmail = await this.usersService.activateEmail(dto.code);
+    return activateEmail;
   }
 
   @Post('registration-email-resending')

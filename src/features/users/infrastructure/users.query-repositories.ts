@@ -13,7 +13,7 @@ export class UsersQueryRepository {
 
   async userOutput(id: string) {
     const findedUser = await this.dataSource.query('SELECT * FROM users WHERE id = $1', [id]);
-    console.log(findedUser);
+    // console.log(findedUser);
     if (!findedUser) {
       throw new NotFoundException('User not found');
     }

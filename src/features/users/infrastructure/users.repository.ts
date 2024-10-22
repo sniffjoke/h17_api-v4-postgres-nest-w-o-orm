@@ -80,16 +80,21 @@ export class UsersRepository {
     return await this.dataSource.query('DELETE FROM users WHERE "id" = $1', [id]);
   }
 
-  async checkUserExistsByLogin(login: string, email: string) {
-    // const findedUser = await this.uRepository.findOne({
-    //   where: [
-    //     { login },
-    //     {email}
-    //   ],
-    // });
-    // if (findedUser) {
-    //   throw new BadRequestException('User already exists');
-    // }
+  async checkIsUserExists(login: string, email: string) {
+    const findedUserByLogin = await this.dataSource.query(
+      'SELECT * FROM users WHERE "login" = $1',
+      [login]
+    )
+    if (findedUserByLogin.length) {
+      throw new BadRequestException('Login already exists');
+    }
+    const findedUserByEmail = await this.dataSource.query(
+      'SELECT * FROM users WHERE "email" = $1',
+      [email]
+    )
+    if (findedUserByEmail.length) {
+      throw new BadRequestException('Email already exists');
+    }
   }
 
 }

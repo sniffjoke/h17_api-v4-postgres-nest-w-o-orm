@@ -19,7 +19,7 @@ export class UsersService {
   }
 
   async createUser(createUserDto: CreateUserDto, isConfirm: boolean): Promise<string> {
-    // const isUserExists = await this.usersRepository.checkUserExistsByLogin(createUserDto.login, createUserDto.email)
+    const isUserExists = await this.usersRepository.checkIsUserExists(createUserDto.login, createUserDto.email)
     const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(isConfirm);
     if (!isConfirm) {
       await this.sendActivationEmail(createUserDto.email, `${SETTINGS.PATH.API_URL}/?code=${emailConfirmation.emailConfirmationConfirmationCode as string}`);
@@ -86,7 +86,7 @@ export class UsersService {
     if (isUserExists.emailConfirmationIsConfirm) {
       throw new BadRequestException('User already activate')
     }
-    const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
+    // const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
     const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
       isUserExists.id
     );
