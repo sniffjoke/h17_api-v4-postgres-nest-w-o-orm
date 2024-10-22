@@ -20,9 +20,12 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
       );
       response.status(status).send(errorsResponse);
     } else if (responseBody.statusCode === 400 && !Array.isArray(responseBody.message)) {
-      console.log(responseBody.message.split(' ')[0].toLowerCase());
+      // console.log(responseBody.message.split(' ')[0].toLowerCase());
       // errorsResponse.errorsMessages.push({ message: responseBody.message, field: Object.keys(request.body ? request.body : {})[0] });
-      errorsResponse.errorsMessages.push({ message: responseBody.message, field: responseBody.message.split(' ')[0].toLowerCase().toString() });
+      console.log(exception);
+      errorsResponse.errorsMessages.push({
+        message: responseBody.message,
+        field: responseBody.message.split(' ')[0].toLowerCase().toString() });
       response.status(status).send(errorsResponse)
     } else {
       // errorsResponse.errorsMessages.push({ message: responseBody.message, field: "id" });

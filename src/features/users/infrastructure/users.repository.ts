@@ -86,7 +86,13 @@ export class UsersRepository {
       [login]
     )
     if (findedUserByLogin.length) {
-      throw new BadRequestException('Login already exists');
+      throw new BadRequestException(
+        'Login already exists'
+        // {
+        //   field:,
+        //   message:
+        // }
+      );
     }
     const findedUserByEmail = await this.dataSource.query(
       'SELECT * FROM users WHERE "email" = $1',
