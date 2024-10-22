@@ -64,30 +64,28 @@ export class UsersService {
              `,
     });
   }
-  //
-  // async resendEmail(email: string) {
-  //   const isUserExists = await this.usersRepository.findUserByEmail(email);
-  //   if (isUserExists.emailConfirmation.isConfirmed) {
-  //     throw new BadRequestException('User already activate')
-  //   }
-  //   const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
-  //   await this.sendActivationEmail(email, `${SETTINGS.PATH.API_URL}/?code=${emailConfirmation.confirmationCode as string}`);
-  //   const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
-  //     isUserExists,
-  //     {
-  //       emailConfirmation,
-  //     },
-  //   );
-  //   return updateUserInfo;
-  // }
-  //
+
+  async resendEmail(email: string) {
+    const isUserExists = await this.usersRepository.findUserByEmail(email);
+    if (isUserExists.emailConfirmationIsConfirmed) {
+      throw new BadRequestException('Email already activate')
+    }
+    const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
+    await this.sendActivationEmail(email, `${SETTINGS.PATH.API_URL}/?code=${emailConfirmation.emailConfirmationConfirmationCode as string}`);
+    const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
+      isUserExists.id,
+      emailConfirmation
+    );
+    return updateUserInfo;
+  }
+
   async activateEmail(code: string) {
     const isUserExists = await this.usersRepository.findUserByCode(code);
     if (isUserExists.emailConfirmationIsConfirm) {
       throw new BadRequestException('Code already activate')
     }
     // const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
-    const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
+    const updateUserInfo = await this.usersRepository.updateUserByActivateEmail(
       isUserExists.id
     );
     return updateUserInfo;

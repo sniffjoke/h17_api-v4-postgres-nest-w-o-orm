@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { EmailConfirmationModel } from '../api/models/input/create-user.dto';
 
 
 @Injectable()
@@ -29,7 +30,7 @@ export class UsersRepository {
     // return await this.uRepository.find();
   }
 
-  async updateUserByResendEmail(userId: any) {
+  async updateUserByActivateEmail(userId: any) {
     // return await this.uRepository.save({
     //   ...currentData,
     //   ...newData,
@@ -40,6 +41,25 @@ export class UsersRepository {
     WHERE id = $1
     `,
       [userId]);
+    return updateUserInfo;
+  }
+
+  async updateUserByResendEmail(userId: any, emailConfirmation: EmailConfirmationModel) {
+    // return await this.uRepository.save({
+    //   ...currentData,
+    //   ...newData,
+    // });
+    const updateUserInfo = await this.dataSource.query(`
+    UPDATE users 
+    SET "emailConfirmationIsConfirm" = $2, "emailConfirmationConfirmationCode" = $3, "emailConfirmationExpirationDate" = $4
+    WHERE id = $1
+    `,
+      [
+        userId,
+        emailConfirmation.emailConfirmationIsConfirmed,
+        emailConfirmation.emailConfirmationConfirmationCode,
+        emailConfirmation.emailConfirmationExpirationDate,
+      ]);
     return updateUserInfo;
   }
 
@@ -60,11 +80,15 @@ export class UsersRepository {
   }
 
   async findUserByEmail(email: string) {
-    // const findedUser = await this.uRepository.findOneBy({ email });
-    // if (!findedUser) {
-    //   throw new NotFoundException('User not found');
-    // }
-    // return findedUser;
+    const findedUser = await this.dataSource.query(`
+    SELECT * FROM users WHERE email = $1
+    `,
+      [email]
+      );
+    if (!findedUser.length) {
+      throw new NotFoundException('User not found');
+    }
+    return findedUser[0];
   }
 
   async findUserByCode(code: string) {

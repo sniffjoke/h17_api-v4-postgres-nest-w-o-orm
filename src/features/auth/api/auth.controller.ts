@@ -93,7 +93,7 @@ export class AuthController {
   @HttpCode(204)
   @UseGuards(ThrottlerGuard)
   async resendEmail(@Body() dto: ResendActivateCodeDto) {
-    // return await this.usersService.resendEmail(dto.email);
+    return await this.usersService.resendEmail(dto.email);
   }
 
   // @Post('password-recovery')

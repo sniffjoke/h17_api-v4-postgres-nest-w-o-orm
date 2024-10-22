@@ -22,7 +22,6 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
     } else if (responseBody.statusCode === 400 && !Array.isArray(responseBody.message)) {
       // console.log(responseBody.message.split(' ')[0].toLowerCase());
       // errorsResponse.errorsMessages.push({ message: responseBody.message, field: Object.keys(request.body ? request.body : {})[0] });
-      console.log(exception);
       errorsResponse.errorsMessages.push({
         message: responseBody.message,
         field: responseBody.message.split(' ')[0].toLowerCase().toString() });
