@@ -51,14 +51,13 @@ export class UsersRepository {
     // });
     const updateUserInfo = await this.dataSource.query(`
     UPDATE users 
-    SET "emailConfirmationIsConfirm" = $2, "emailConfirmationConfirmationCode" = $3, "emailConfirmationExpirationDate" = $4
+    SET "emailConfirmationExpirationDate" = $2, "emailConfirmationConfirmationCode" = $3
     WHERE id = $1
     `,
       [
         userId,
-        emailConfirmation.emailConfirmationIsConfirmed,
-        emailConfirmation.emailConfirmationConfirmationCode,
         emailConfirmation.emailConfirmationExpirationDate,
+        emailConfirmation.emailConfirmationConfirmationCode
       ]);
     return updateUserInfo;
   }
