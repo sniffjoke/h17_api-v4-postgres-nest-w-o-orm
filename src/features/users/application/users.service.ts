@@ -84,7 +84,7 @@ export class UsersService {
   async activateEmail(code: string) {
     const isUserExists = await this.usersRepository.findUserByCode(code);
     if (isUserExists.emailConfirmationIsConfirm) {
-      throw new BadRequestException('User already activate')
+      throw new BadRequestException('Code already activate')
     }
     // const emailConfirmation: EmailConfirmationModel = this.createEmailConfirmation(false);
     const updateUserInfo = await this.usersRepository.updateUserByResendEmail(
