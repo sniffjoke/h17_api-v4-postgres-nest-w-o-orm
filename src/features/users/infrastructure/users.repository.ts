@@ -85,7 +85,7 @@ export class UsersRepository {
       [email]
       );
     if (!findedUser.length) {
-      throw new NotFoundException('User not found');
+      throw new BadRequestException('Email not exists');
     }
     return findedUser[0];
   }
