@@ -43,7 +43,7 @@ export class TokensRepository {
   async updateStatusTokensAfterDeleteAllInDb(filter: any) {
     // const updateTokens = await this.tRepository.update(filter, payload)
     // return updateTokens
-    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" = $1 AND "userId" <> $2', [filter.deviceId, filter.userId]);
+    return await this.dataSource.query('UPDATE tokens SET "blackList" = true WHERE "deviceId" <> $1 AND "userId" = $2', [filter.deviceId, filter.userId]);
   }
 
   // Update status tokens after refresh tokens
